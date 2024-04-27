@@ -118,4 +118,4 @@ const players = (function()
 	return {setPlayerNames, getCurrentPlayerName, changePlayerTurn, getCurrentPlayerMarker};
 })();
 
-players.setPlayerNames()
+//players.setPlayerNames()

@@ -11,6 +11,13 @@ body
 
 main
 {
+	display: flex;
+	gap: 50px;
+	align-items: center;
+}
+
+#grid-game
+{
 	display: grid;
 	width: 400px;
 	height: 400px;
@@ -25,4 +32,11 @@ main
 	font-size: 5rem;
 	justify-content: center;
 	align-items: center;
+}
+
+#reset-button
+{
+	font-size: 1.6rem;
+	padding: 1em;
+	border-radius: 0.5em;
 }
