@@ -44,6 +44,8 @@ const gameMaster = (function()
 				e.target.textContent = gameBoard.getCellValue(coords[1], coords[0]);
 				playedRounds++;
 			}
+			if (playedRounds === 9)
+				gameResultText.textContent = "Draw";
 		}
 	});
 
