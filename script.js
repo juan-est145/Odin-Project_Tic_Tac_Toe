@@ -19,7 +19,19 @@ const gameBoard = (function()
 		return (null);
 	}
 
-	return {updateGameGrid, getCellValue};
+	const searchForWinner = (x_coord, y_coord, marker) =>
+	{
+		if (gameGrid[0][x_coord] === marker && gameGrid[1][x_coord] === marker && gameGrid[2][x_coord] === marker)
+			return (true);
+		else if (gameGrid[y_coord][0] === marker && gameGrid[y_coord][1] === marker && gameGrid[y_coord][2] === marker)
+			return (true);
+		else if (gameGrid[0][0] === marker && gameGrid[1][1] === marker && gameGrid[2][2] === marker)
+			return (true);
+		else if (gameGrid[0][2] === marker && gameGrid[1][1] === marker && gameGrid[2][0] === marker)
+			return (true);
+		return (false);
+	}
+	return {updateGameGrid, getCellValue, searchForWinner};
 })();
 
 
@@ -33,19 +45,29 @@ const gameMaster = (function()
 
 	gameGridDom.addEventListener("click", (e)=>
 	{
+		if (e.target.className !== "game-cell" && gameWon === true)
+			return ;
 		const coords = e.target.dataset.coords.split('-');
-		if (e.target.className === "game-cell" && gameWon === false)
+		if (gameBoard.updateGameGrid(parseInt(coords[1]), parseInt(coords[0]), players.getCurrentPlayerMarker()) === true)
 		{
-			if (gameBoard.updateGameGrid(parseInt(coords[1]), parseInt(coords[0]), players.getCurrentPlayerMarker()) === true)
+			e.target.textContent = gameBoard.getCellValue(coords[1], coords[0]);
+			playedRounds++;
+			if (playedRounds >= 5 && playedRounds < 9)
 			{
-				let currentPlayer = players.changePlayerTurn();
-				playerTurnText.textContent = currentPlayer === "Player 1" ? 
-				`${players.getPlayerNames().player1Name}'s turn` : `${players.getPlayerNames().player2Name}'s turn`;
-				e.target.textContent = gameBoard.getCellValue(coords[1], coords[0]);
-				playedRounds++;
+				gameWon = gameBoard.searchForWinner(parseInt(coords[1]), parseInt(coords[0]), players.getCurrentPlayerMarker());
+				if (gameWon === true)
+				{
+					gameResultText.textContent = `${players.getCurrentPlayerName()} wins the game`;
+					playerTurnText.textContent = "";
+				}
 			}
-			if (playedRounds === 9)
+			else if (playedRounds === 9)
 				gameResultText.textContent = "Draw";
+			if (gameWon === false)
+			{
+				players.changePlayerTurn();
+				playerTurnText.textContent = `${players.getCurrentPlayerName()}'s turn`;
+			}
 		}
 	});
 
@@ -77,11 +99,9 @@ const players = (function()
 		document.querySelector("#player-turn").textContent = `${player1.name}'s turn`;
 	};
 	
-	const getPlayerNames = () =>
+	const getCurrentPlayerName = () =>
 	{
-		let player1Name = player1.name;
-		let player2Name = player2.name;
-		return {player1Name, player2Name};
+		return (currentPlayerTurn === "Player 1" ? player1.name : player2.name);
 	};
 
 	const changePlayerTurn = () =>
@@ -95,7 +115,7 @@ const players = (function()
 		return (currentPlayerTurn === "Player 1" ? "X" : "O");
 	}
 
-	return {setPlayerNames, getPlayerNames, changePlayerTurn, getCurrentPlayerMarker};
+	return {setPlayerNames, getCurrentPlayerName, changePlayerTurn, getCurrentPlayerMarker};
 })();
 
 players.setPlayerNames()
