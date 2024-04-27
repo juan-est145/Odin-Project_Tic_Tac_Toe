@@ -18,5 +18,9 @@ main
 
 .game-cell
 {
+	display: flex;
 	border: solid;
+	font-size: 5rem;
+	justify-content: center;
+	align-items: center;
 }
