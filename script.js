@@ -43,4 +43,3 @@ const players = (function()
 	return {getPlayerNames};
 })();
 
-players.getPlayerNames();
