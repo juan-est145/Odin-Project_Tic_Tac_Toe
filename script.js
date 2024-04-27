@@ -31,7 +31,17 @@ const gameBoard = (function()
 			return (true);
 		return (false);
 	}
-	return {updateGameGrid, getCellValue, searchForWinner};
+
+	const ResetGameGrid = () =>
+	{
+		for (let i = 0; i < gameGrid.length; i++) 
+		{
+			for (let j = 0; j < gameGrid.length; j++)
+				gameGrid[i][j] = "";	
+		}
+	};
+
+	return {updateGameGrid, getCellValue, searchForWinner, ResetGameGrid};
 })();
 
 
@@ -40,6 +50,7 @@ const gameMaster = (function()
 	const gameGridDom = document.querySelector("#grid-game");
 	const playerTurnText = document.querySelector("#player-turn");
 	const gameResultText = document.querySelector("#game-result");
+	const resetButton = document.querySelector("#reset-button");
 	let gameWon = false;
 	let playedRounds = 0;
 
@@ -69,6 +80,18 @@ const gameMaster = (function()
 				playerTurnText.textContent = `${players.getCurrentPlayerName()}'s turn`;
 			}
 		}
+	});
+
+	resetButton.addEventListener("click", () =>
+	{
+		gameBoard.ResetGameGrid();
+		if (players.getCurrentPlayerTurn() === "Player 2")
+			players.changePlayerTurn();
+		document.querySelectorAll(".game-cell").forEach(cell => cell.textContent = "");
+		playedRounds = 0;
+		gameWon = false;
+		gameResultText.textContent = "";
+		playerTurnText.textContent = `${players.getCurrentPlayerName()}'s turn`;
 	});
 
 	return {};
@@ -104,6 +127,11 @@ const players = (function()
 		return (currentPlayerTurn === "Player 1" ? player1.name : player2.name);
 	};
 
+	const getCurrentPlayerTurn = () =>
+	{
+		return (currentPlayerTurn);
+	};
+
 	const changePlayerTurn = () =>
 	{
 		currentPlayerTurn = currentPlayerTurn === "Player 1" ? "Player 2" : "Player 1";
@@ -115,7 +143,7 @@ const players = (function()
 		return (currentPlayerTurn === "Player 1" ? "X" : "O");
 	}
 
-	return {setPlayerNames, getCurrentPlayerName, changePlayerTurn, getCurrentPlayerMarker};
+	return {setPlayerNames, getCurrentPlayerName, changePlayerTurn, getCurrentPlayerMarker, getCurrentPlayerTurn};
 })();
 
-//players.setPlayerNames()
+players.setPlayerNames()
