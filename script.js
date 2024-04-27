@@ -4,9 +4,19 @@ const gameBoard = (function()
 	const updateGameGrid = (x_index, y_index, value) =>
 	{
 		if (!gameGrid[y_index][x_index])
+		{
 			gameGrid[y_index][x_index] = value;
+			return (true);
+		}
+		return (false);
 	}
-	return {updateGameGrid};
+	const getCellValue = (x_index, y_index) =>
+	{
+		if (x_index >= 0 && x_index <= 2 && y_index >= 0 && y_index <= 2)
+			return (gameGrid[y_index][x_index]);
+		return (null);
+	}
+	return {updateGameGrid, getCellValue};
 })();
 
 
@@ -21,10 +31,14 @@ const gameMaster = (function()
 		const coords = e.target.dataset.coords.split('-');
 		if (e.target.className === "game-cell")
 		{
-			gameBoard.updateGameGrid(parseInt(coords[1]), parseInt(coords[0]), players.getCurrentPlayerMarker());
-			players.changePlayerTurn();
+			if (gameBoard.updateGameGrid(parseInt(coords[1]), parseInt(coords[0]), players.getCurrentPlayerMarker()) === true)
+			{
+				let currentPlayer = players.changePlayerTurn();
+				playerTurnText.textContent = currentPlayer === "Player 1" ? 
+				`${players.getPlayerNames().player1Name}'s turn` : `${players.getPlayerNames().player2Name}'s turn`;
+				e.target.textContent = gameBoard.getCellValue(coords[1], coords[0]);
+			}
 		}
-			//alert(`Target position is ${coords[0]}y and ${coords[1]}x`);
 	});
 	return {gameGridDom};
 })();
@@ -70,3 +84,4 @@ const players = (function()
 	return {setPlayerNames, getPlayerNames, changePlayerTurn, getCurrentPlayerMarker};
 })();
 
+players.setPlayerNames()
